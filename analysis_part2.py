@@ -85,4 +85,18 @@ def save_csv(rows, path="cell_frequencies.csv"):
     print(f"\nSaved {len(rows)} rows to {path}")
 
 
-def main()
+def main():
+    parser = argparse.ArgumentParser(description="Part 2: cell population frequencies")
+    parser.add_argument("--csv", action="store_true", help="Save results to cell_frequencies.csv")
+    parser.add_argument("--sample", default=None, help="Filter by sample ID")
+    args = parser.parse_args()
+
+    rows = get_frequencies(sample_filter=args.sample)
+    print_table(rows)
+
+    if args.csv:
+        save_csv(rows)
+
+
+if __name__ == "__main__":
+    main()
