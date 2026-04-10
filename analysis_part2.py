@@ -75,7 +75,14 @@ def print_table(rows):
     print(f"\nTotal rows: {len(rows)} ({len(rows) // 5} unique samples)")
 
 
-def save_csv():
+def save_csv(rows, path="cell_frequencies.csv"):
+    if not rows:
+        return
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=["sample", "total_count", "population", "count", "percentage"])
+        writer.writeheader()
+        writer.writerows(rows)
+    print(f"\nSaved {len(rows)} rows to {path}")
 
 
 def main()
