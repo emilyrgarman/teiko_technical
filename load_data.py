@@ -114,3 +114,25 @@ def load_csv(conn, csv_path):
     )
     conn.commit()
     return len(samples), len(counts)
+
+
+def main():
+    if os.path.exists(DB_FILE):
+        os.remove(DB_FILE)
+        print(f"Removed existing {DB_FILE}")
+
+    conn = sqlite3.connect(DB_FILE)
+    try:
+        init_db(conn)
+        print("Schema initialized")
+
+        n_samples, n_counts = load_csv(conn, CSV_FILE)
+        print(f"Loaded {n_samples} samples and {n_counts} cell counts")
+    finally:
+        conn.close()
+
+    print(f"\nDatabase ready: {DB_FILE}")
+
+
+if __name__ == "__main__":
+    main()
