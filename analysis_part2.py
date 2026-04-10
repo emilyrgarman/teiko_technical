@@ -25,7 +25,23 @@ ORDER BY
     p.name
 """
 
-def get_frequencies():
+def get_frequencies(sample_filter=None):
+    if not os.path.exists(DB_FILE):
+        sys.exit(
+            f"ERROR: {DB_FILE} not found.\n"
+            "Run python load_data.py first to create database."
+        )
+
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+
+    where = "WHERE sm.sample_id = ?" if sample_filter else ""
+    params = (sample_filter,) if sample_filter else ()
+
+    rows = conn.execute(QUERY.format(where=where), params).fetchall()
+    conn.close()
+
+    return [dict(r) for r in rows]
 
 
 def print_table():
