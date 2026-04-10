@@ -25,4 +25,13 @@ ORDER BY
     p.name
 """
 
+def get_frequencies():
 
+
+def print_table():
+
+
+def save_csv():
+
+
+def main()
