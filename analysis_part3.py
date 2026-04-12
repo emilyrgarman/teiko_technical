@@ -25,7 +25,34 @@ COLORS = {"yes": "green", "no": "red"}
 
 # pull data
 def load_data():
-    return
+    if not os.path.exists(DB_FILE):
+        sys.exit(f"ERROR: {DB_FILE} not found. Run python load_data.py first.")
+ 
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+ 
+    rows = conn.execute("""
+        SELECT
+            sm.sample_id,
+            sm.response,
+            p.name AS population,
+            ROUND(
+                cc.count * 100.0 / SUM(cc.count) OVER (PARTITION BY sm.sample_id),
+                4
+            ) AS percentage
+        FROM samples sm
+        JOIN subjects sub ON sub.subject_id = sm.subject_id
+        JOIN cell_counts cc ON cc.sample_id = sm.sample_id
+        JOIN populations p  ON p.population_id = cc.population_id
+        WHERE sub.condition   = 'melanoma'
+          AND sm.treatment    = 'miraclib'
+          AND sm.sample_type  = 'PBMC'
+          AND sm.response    IN ('yes', 'no')
+        ORDER BY sm.response, p.name
+    """).fetchall()
+ 
+    conn.close()
+    return [dict(r) for r in rows]
 
 
 def organize():
